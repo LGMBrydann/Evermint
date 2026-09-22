@@ -507,7 +507,21 @@ const state = {
       localStorage.getItem(
         "evermint-recent"
       ) || "[]"
-    )
+    ),
+
+  scramjetEnabled:
+    localStorage.getItem(
+      "evermint-scramjet-enabled"
+    ) === "true",
+
+  scramjetBackend:
+    localStorage.getItem(
+      "evermint-scramjet-backend"
+    ) || "",
+
+  scramjetController: null,
+
+  scramjetFrame: null
 
 };
 
@@ -1169,7 +1183,7 @@ function launchGame(id) {
   */
 
   const launchPath =
-    `play/${game.id}/`;
+    `lessons/${game.id}/`;
 
 
   showToast(
@@ -1480,6 +1494,171 @@ $("#start-search-input")
    BROWSER
    ========================================================= */
 
+const SCRAMJET_ASSETS = {
+  runtime: "/vendor/scramjet/scramjet.all.js",
+  controller: "/vendor/scramjet/controller.api.js",
+  sw: "/vendor/scramjet/controller.sw.js",
+  inject: "/vendor/scramjet/controller.inject.js",
+  wasm: "/vendor/scramjet/scramjet.wasm.wasm"
+};
+
+function updateBrowserStatus(message) {
+
+  const status = $("#browser-status");
+
+  if (status) {
+    status.textContent = message;
+  }
+
+}
+
+function getScramjetBackendUrl() {
+
+  return (
+    localStorage.getItem(
+      "evermint-scramjet-backend"
+    ) || ""
+  ).trim();
+
+}
+
+function getScramjetEnabled() {
+
+  return localStorage.getItem(
+    "evermint-scramjet-enabled"
+  ) === "true";
+
+}
+
+function loadScript(src) {
+
+  return new Promise((resolve, reject) => {
+
+    const existing = document.querySelector(`script[src="${src}"]`);
+
+    if (existing) {
+      if (existing.dataset.loaded === "true") {
+        resolve();
+        return;
+      }
+
+      existing.addEventListener(
+        "load",
+        () => {
+          existing.dataset.loaded = "true";
+          resolve();
+        },
+        { once: true }
+      );
+
+      existing.addEventListener(
+        "error",
+        () => reject(new Error(`Failed to load ${src}`)),
+        { once: true }
+      );
+
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = false;
+    script.onload = () => {
+      script.dataset.loaded = "true";
+      resolve();
+    };
+    script.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(script);
+
+  });
+
+}
+
+async function ensureScramjetRuntime() {
+
+  if (window.$scramjet && window.$scramjetController) {
+    return true;
+  }
+
+  try {
+    await Promise.all([
+      loadScript(SCRAMJET_ASSETS.runtime),
+      loadScript(SCRAMJET_ASSETS.controller)
+    ]);
+  } catch (error) {
+    console.error("Scramjet runtime failed to load", error);
+    return false;
+  }
+
+  return Boolean(
+    window.$scramjet && window.$scramjetController
+  );
+
+}
+
+async function initializeScramjetController() {
+
+  const backendUrl = getScramjetBackendUrl();
+
+  if (!backendUrl || !getScramjetEnabled()) {
+    return false;
+  }
+
+  try {
+    if (!await ensureScramjetRuntime()) {
+      return false;
+    }
+
+    if (!("serviceWorker" in navigator)) {
+      return false;
+    }
+
+    if (!state.scramjetController) {
+      await navigator.serviceWorker.register(
+        SCRAMJET_ASSETS.sw,
+        { scope: "/" }
+      );
+
+      await navigator.serviceWorker.ready;
+
+      state.scramjetController = new window.$scramjetController.Controller({
+        serviceworker: navigator.serviceWorker.controller,
+        transport: null,
+        config: {
+          prefix: "/~/sj/",
+          scramjetPath: SCRAMJET_ASSETS.runtime,
+          injectPath: SCRAMJET_ASSETS.inject,
+          wasmPath: SCRAMJET_ASSETS.wasm,
+          virtualWasmPath: "scramjet.wasm.js"
+        },
+        scramjetConfig: {
+          backendUrl
+        }
+      });
+
+      await state.scramjetController.wait();
+    }
+
+    const frame = $("#browser-frame");
+
+    if (!state.scramjetFrame && frame) {
+      state.scramjetFrame = state.scramjetController.createFrame(frame);
+    }
+
+    if (state.scramjetFrame) {
+      updateBrowserStatus("Scramjet proxy active.");
+      return true;
+    }
+
+  } catch (error) {
+    console.error("Scramjet controller setup failed", error);
+    showToast("Scramjet backend could not initialize.");
+  }
+
+  return false;
+
+}
+
 function normalizeBrowserUrl(value) {
 
   const trimmed =
@@ -1525,9 +1704,18 @@ function showBrowserHome() {
     frame.src = "about:blank";
   }
 
+  const backend = getScramjetBackendUrl();
+  const enabled = getScramjetEnabled();
+
+  if (backend && enabled) {
+    updateBrowserStatus("Scramjet proxy ready.");
+  } else {
+    updateBrowserStatus("Ready for Scramjet integration when you add a proxy backend.");
+  }
+
 }
 
-function openBrowserURL(rawUrl) {
+async function openBrowserURL(rawUrl) {
 
   const normalized = normalizeBrowserUrl(rawUrl);
 
@@ -1549,6 +1737,12 @@ function openBrowserURL(rawUrl) {
     home.hidden = true;
   }
 
+  if (state.scramjetFrame && await initializeScramjetController()) {
+    frame.hidden = false;
+    state.scramjetFrame.go(normalized);
+    return;
+  }
+
   frame.hidden = false;
   frame.src = normalized;
 
@@ -1557,9 +1751,9 @@ function openBrowserURL(rawUrl) {
 $("#browser-go")
   .addEventListener(
     "click",
-    () => {
+    async () => {
 
-      openBrowserURL(
+      await openBrowserURL(
         $("#browser-address")
           .value
       );
@@ -1597,6 +1791,11 @@ $("#browser-back")
         return;
       }
 
+      if (state.scramjetFrame) {
+        state.scramjetFrame.back();
+        return;
+      }
+
       try {
         frame.contentWindow.history.back();
       } catch (error) {
@@ -1619,6 +1818,11 @@ $("#browser-forward")
         return;
       }
 
+      if (state.scramjetFrame) {
+        state.scramjetFrame.forward();
+        return;
+      }
+
       try {
         frame.contentWindow.history.forward();
       } catch (error) {
@@ -1638,6 +1842,11 @@ $("#browser-reload")
 
       if (!frame || frame.hidden) {
         showBrowserHome();
+        return;
+      }
+
+      if (state.scramjetFrame) {
+        state.scramjetFrame.reload();
         return;
       }
 
@@ -1703,6 +1912,19 @@ function applySettings() {
   );
 
 
+  const scramjetBackend =
+    localStorage.getItem(
+      "evermint-scramjet-backend"
+    ) || "";
+
+  const scramjetEnabled =
+    localStorage.getItem(
+      "evermint-scramjet-enabled"
+    ) === "true";
+
+  state.scramjetEnabled = scramjetEnabled;
+  state.scramjetBackend = scramjetBackend;
+
   $("#accent-color").value =
     accent;
 
@@ -1713,6 +1935,18 @@ function applySettings() {
 
   $("#reduced-motion").checked =
     reducedMotion;
+
+  $("#scramjet-proxy-url").value =
+    scramjetBackend;
+
+  $("#scramjet-enabled").checked =
+    scramjetEnabled;
+
+  if (scramjetBackend && scramjetEnabled) {
+    updateBrowserStatus("Scramjet proxy ready.");
+  } else {
+    updateBrowserStatus("Ready for Scramjet integration when you add a proxy backend.");
+  }
 
 }
 
@@ -1765,6 +1999,42 @@ $("#reduced-motion")
   );
 
 
+$("#scramjet-proxy-url")
+  .addEventListener(
+    "change",
+    event => {
+
+      const value = event.target.value.trim();
+
+      localStorage.setItem(
+        "evermint-scramjet-backend",
+        value
+      );
+
+      state.scramjetBackend = value;
+      applySettings();
+
+    }
+  );
+
+
+$("#scramjet-enabled")
+  .addEventListener(
+    "change",
+    event => {
+
+      localStorage.setItem(
+        "evermint-scramjet-enabled",
+        String(event.target.checked)
+      );
+
+      state.scramjetEnabled = event.target.checked;
+      applySettings();
+
+    }
+  );
+
+
 $("#reset-settings")
   .addEventListener(
     "click",
@@ -1780,6 +2050,14 @@ $("#reset-settings")
 
       localStorage.removeItem(
         "evermint-reduced-motion"
+      );
+
+      localStorage.removeItem(
+        "evermint-scramjet-backend"
+      );
+
+      localStorage.removeItem(
+        "evermint-scramjet-enabled"
       );
 
       applySettings();

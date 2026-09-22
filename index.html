@@ -8,6 +8,8 @@
   <title>Evermint</title>
 
   <link rel="stylesheet" href="styles.css">
+  <script src="/vendor/scramjet/scramjet.all.js"></script>
+  <script src="/vendor/scramjet/controller.api.js"></script>
 </head>
 
 <body>
@@ -325,7 +327,7 @@
               Enter a URL to get browsing.
             </p>
 
-            <small>
+            <small id="browser-status">
               Ready for Scramjet integration when you add a proxy backend.
             </small>
 
@@ -474,6 +476,35 @@
             id="reduced-motion"
             type="checkbox"
           >
+
+        </div>
+
+
+        <div class="setting-row">
+
+          <div>
+            <strong>
+              Scramjet Proxy
+            </strong>
+
+            <span>
+              Optional backend base URL for Scramjet-powered browsing.
+            </span>
+          </div>
+
+          <div class="scramjet-settings-wrap">
+            <input
+              id="scramjet-proxy-url"
+              type="url"
+              placeholder="https://your-scramjet-backend.example"
+              autocomplete="off"
+            >
+
+            <label class="scramjet-toggle">
+              <input id="scramjet-enabled" type="checkbox">
+              <span>Enabled</span>
+            </label>
+          </div>
 
         </div>
 
