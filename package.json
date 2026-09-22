@@ -1,0 +1,14 @@
+{
+  "name": "evermint",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start": "node backend/wisp-server.js",
+    "serve": "python3 -m http.server 8000",
+    "dev": "node backend/wisp-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

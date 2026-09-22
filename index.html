@@ -8,6 +8,8 @@
   <title>Evermint</title>
 
   <link rel="stylesheet" href="styles.css">
+  <script src="/vendor/scramjet/scramjet.all.js"></script>
+  <script src="/vendor/scramjet/controller.api.js"></script>
 </head>
 
 <body>
@@ -311,7 +313,7 @@
           class="browser-view"
         >
 
-          <div class="browser-home">
+          <div id="browser-home" class="browser-home">
 
             <div class="browser-home-logo">
               🌿
@@ -325,11 +327,18 @@
               Your browser window is ready.
             </p>
 
-            <small>
+            <small id="browser-status">
               Scramjet can be connected here.
             </small>
 
           </div>
+
+          <iframe
+            id="browser-frame"
+            title="Browser frame"
+            hidden
+            loading="lazy"
+          ></iframe>
 
         </div>
 
@@ -467,6 +476,35 @@
             id="reduced-motion"
             type="checkbox"
           >
+
+        </div>
+
+
+        <div class="setting-row">
+
+          <div>
+            <strong>
+              Scramjet Proxy
+            </strong>
+
+            <span>
+              WISP backend for the browser. Defaults to the Evermint Pages endpoint.
+            </span>
+          </div>
+
+          <div class="scramjet-settings-wrap">
+            <input
+              id="scramjet-proxy-url"
+              type="url"
+              value="wss://evermint.pages.dev"
+              autocomplete="off"
+            >
+
+            <label class="scramjet-toggle">
+              <input id="scramjet-enabled" type="checkbox" checked>
+              <span>Enabled</span>
+            </label>
+          </div>
 
         </div>
 
