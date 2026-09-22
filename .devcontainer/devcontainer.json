@@ -1,0 +1,14 @@
+{
+  "name": "My Codespace",
+  "customizations": {
+    "codespaces": {
+      "repositories": {
+        "LGMBrydann/unblockedgames": {
+          "permissions": {
+            "contents": "write"
+          }
+        }
+      }
+    }
+  }
+}
