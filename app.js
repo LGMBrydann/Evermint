@@ -10,305 +10,477 @@
    the exact folder structure of the web-port fork.
    ========================================================= */
 
-const GAMES = [
+const GAME_MANIFEST = [
+  "1",
+  "100-player-pong",
+  "123movies",
+  "1v1",
+  "1v1space",
+  "2048",
+  "2048-multitask",
+  "9007199254740992",
+  "achievementunlocked",
+  "adarkroom",
+  "ages-of-conflict",
+  "alienhominid",
+  "amidst-the-clouds",
+  "avalanche",
+  "backrooms",
+  "bad-ice-cream",
+  "bad-ice-cream-2",
+  "bad-ice-cream-3",
+  "baldis-basics",
+  "ball-hop",
+  "ballistic-chickens",
+  "basketball-stars",
+  "betaUI",
+  "big-tower-tiny-square",
+  "bitlife",
+  "blocky-tower",
+  "bloonstd",
+  "bloonstd2",
+  "bloonstd4",
+  "bloxorz",
+  "bouncybasketball",
+  "breaklock",
+  "breakout",
+  "browserquest",
+  "chrome-dino",
+  "circlo",
+  "cluster-rush",
+  "connect3",
+  "cookie",
+  "core-ball",
+  "crossyroad",
+  "csgo-clicker",
+  "cupcakes",
+  "cuttherope",
+  "cyber-city-driver",
+  "discus",
+  "dogeminer",
+  "doodlejump",
+  "drift-city",
+  "driftking",
+  "ducklife1",
+  "ducklife2",
+  "ducklife3",
+  "ducklife4",
+  "dune",
+  "dunkers-fight",
+  "eatio",
+  "edge-surf",
+  "edgenotfound",
+  "eel-slap",
+  "eggy-car",
+  "elasticman",
+  "elsasnapchat",
+  "endlesswar3",
+  "escapingtheprison",
+  "evil-glitch",
+  "evolution",
+  "exo",
+  "fallboys",
+  "ferge",
+  "flappy",
+  "floyd",
+  "fnaf",
+  "fnaf4",
+  "fruitninja",
+  "geometrydash",
+  "goodnight",
+  "hextris",
+  "idle-breakout",
+  "idle-shark",
+  "impossiblequiz",
+  "interactivebuddy",
+  "jetpack-joyride",
+  "just-fall",
+  "just-one-boss",
+  "kitchen-gun-game",
+  "kittencannon",
+  "krunker",
+  "learntofly",
+  "learntofly2",
+  "mario",
+  "minecraft",
+  "minecraft-js",
+  "motox3m",
+  "motox3m-pool",
+  "motox3m-spooky",
+  "motox3m-winter",
+  "motox3m2",
+  "multiplayer-pong",
+  "pacman",
+  "paperio",
+  "papery-planes",
+  "particle-clicker",
+  "pokemonfirered",
+  "pokey-stick",
+  "pong",
+  "pushback",
+  "racer",
+  "radiusraid",
+  "restaurant-rush",
+  "retrobowl",
+  "retrohaunt",
+  "rooftop-snipers-2",
+  "run3",
+  "sans",
+  "slope",
+  "spaceinvaders",
+  "stack",
+  "stack-ball",
+  "station-meltdown",
+  "steal-this-election",
+  "subwaysurfershouston",
+  "superhot",
+  "temple-run-2",
+  "tetris",
+  "thesquare",
+  "tic-tac-toe",
+  "tic-tac-toe-ai",
+  "timeshooter",
+  "tomrun",
+  "towermaster",
+  "tunnelrush",
+  "tv-static",
+  "twerk-race-3d",
+  "twitch-tetris",
+  "tyronetetris",
+  "veloce",
+  "vex3",
+  "vex4",
+  "vex5",
+  "vex6",
+  "vex7",
+  "wallsmash",
+  "waterworks",
+  "weavesilk",
+  "webgl-fluid-simulation",
+  "webretro",
+  "whac-a-mole",
+  "wordle",
+  "worlds-hardest-game",
+  "worlds-hardest-game-2",
+  "x-trial-racing",
+  "xx142-b2exe",
+  "yoshifabrication",
+  "you-are-bezos",
+  "zombs-royale",
+  "zoro"
+];
 
-  {
-    id: "amanda-the-adventurer",
-    name: "Amanda the Adventurer",
-    category: "Horror",
-    icon: "👧",
-    featured: true
-  },
+const FEATURED_GAMES = new Set([
+  "baldis-basics",
+  "bloxorz",
+  "chrome-dino",
+  "cookie",
+  "cuttherope",
+  "driftking",
+  "ducklife4",
+  "fallboys",
+  "fnaf",
+  "geometrydash",
+  "jetpack-joyride",
+  "minecraft",
+  "motox3m",
+  "pacman",
+  "pong",
+  "slope",
+  "spaceinvaders",
+  "station-meltdown",
+  "superhot",
+  "temple-run-2",
+  "tetris",
+  "vex3",
+  "wordle"
+]);
 
-  {
-    id: "andys-apple-farm",
-    name: "Andy's Apple Farm",
-    category: "Indie",
-    icon: "🍎",
-    featured: true
-  },
+const ICON_CATALOG = [
+  "100pong.webp",
+  "10m.webp",
+  "123movies.webp",
+  "1v1.webp",
+  "1v1space.webp",
+  "2048.webp",
+  "900.webp",
+  "BAS.webp",
+  "BrowserQuest.webp",
+  "CSGO.webp",
+  "Dogecoin.webp",
+  "PokemonFireRed.webp",
+  "Racer.webp",
+  "Rooftop-Snipers.webp",
+  "Station-Meltdown.webp",
+  "SubwayMonaco.webp",
+  "VELOCE.webp",
+  "Whac-A-Mole.webp",
+  "YFS.webp",
+  "ache.webp",
+  "adarkroom.webp",
+  "ages-of-conflict.webp",
+  "alienhominid.webp",
+  "amidst-the-clouds.webp",
+  "avalanche.webp",
+  "backrooms.webp",
+  "bad-ice-cream-2.webp",
+  "bad-ice-cream-3.webp",
+  "bad-ice-cream.webp",
+  "baldis-basics.webp",
+  "ballhop.webp",
+  "ballistic-chickens.webp",
+  "basketball.webp",
+  "biters.webp",
+  "bitlife.webp",
+  "blocky.webp",
+  "bloonstd.webp",
+  "bloonstd2.webp",
+  "bloonstd4.webp",
+  "bloxorz.webp",
+  "box.webp",
+  "breaklock.webp",
+  "breakout.webp",
+  "btts.webp",
+  "chrom.webp",
+  "circlo.webp",
+  "cluster.webp",
+  "con3.webp",
+  "cookie.webp",
+  "coreball.webp",
+  "crossyroad.webp",
+  "ctr.webp",
+  "cupcakes.webp",
+  "cyber.webp",
+  "doodle.webp",
+  "driftc.webp",
+  "driftking.webp",
+  "ducklife.webp",
+  "ducklife2.webp",
+  "ducklife3.webp",
+  "ducklife4.webp",
+  "dune.webp",
+  "dunk.webp",
+  "eatio.webp",
+  "edge-surf.webp",
+  "edgenotfound.webp",
+  "eel-slap.webp",
+  "eggy-car.webp",
+  "elasticman.webp",
+  "elec.webp",
+  "endlesswar3.webp",
+  "evil-glitch.webp",
+  "evolution.webp",
+  "excapingtheprison.webp",
+  "exo.webp",
+  "fall-boys.webp",
+  "ferge.webp",
+  "flappy.webp",
+  "fliphero.webp",
+  "fnaf.webp",
+  "fnf-vs-lofi-girl.webp",
+  "fridaynightfunkin.webp",
+  "fruitninja.webp",
+  "funnyshooter.webp",
+  "geodash.webp",
+  "gn.webp",
+  "hextrt.webp",
+  "idlebreakout.webp",
+  "impossiblequiz.webp",
+  "interactivebuddy.webp",
+  "jetpack-joyride.webp",
+  "just-fall.webp",
+  "just-one-boss.webp",
+  "kitchen-gun-game.webp",
+  "kittencannon.webp",
+  "krunker.webp",
+  "learntofly.webp",
+  "learntofly2.webp",
+  "mario.webp",
+  "meltdown.webp",
+  "minecraft.webp",
+  "moto-spook.webp",
+  "motox3m-pool.webp",
+  "motox3m-winter.webp",
+  "motox3m.webp",
+  "motox3m2.webp",
+  "multit.webp",
+  "ninjacut.webp",
+  "one.webp",
+  "pacman.webp",
+  "paperio.webp",
+  "paperplane.webp",
+  "parclick.webp",
+  "pickyback.webp",
+  "pogy.webp",
+  "pong.webp",
+  "prox.webp",
+  "pushback.webp",
+  "raid.webp",
+  "resr.webp",
+  "retrobowl.webp",
+  "retrohaunt.webp",
+  "rooftopsn.webp",
+  "run3.webp",
+  "sans.webp",
+  "sharkgame.webp",
+  "slope.webp",
+  "spaceinv.webp",
+  "stack.webp",
+  "stackball.webp",
+  "subsan.webp",
+  "subway.webp",
+  "subwaysurferbeijing.webp",
+  "subwaysurfershouston.webp",
+  "superhot.webp",
+  "sus.webp",
+  "templerun.webp",
+  "tetris.webp",
+  "thesquare.webp",
+  "timeshooters.webp",
+  "toe.webp",
+  "toe2.webp",
+  "toeai.webp",
+  "tomrun.webp",
+  "towermaster.webp",
+  "tunnelrush.webp",
+  "tv-static.webp",
+  "twerk-race-3d.webp",
+  "twitch-tetris.webp",
+  "vex3.webp",
+  "vex4.webp",
+  "vex5.webp",
+  "vex6.webp",
+  "vex7.webp",
+  "wallsmash.webp",
+  "waterworks.webp",
+  "weavesilk.webp",
+  "webgl-fluid-simulation.webp",
+  "webretro.webp",
+  "whg.webp",
+  "wordle.webp",
+  "xtr.webp",
+  "xx142-b2exe.webp",
+  "yoshifabrication.webp",
+  "you-are-bezos.webp",
+  "zombs-royale.webp",
+  "zoro.webp"
+];
 
-  {
-    id: "baldi-plus",
-    name: "Baldi's Basics Plus",
-    category: "Horror",
-    icon: "📚",
-    featured: true
-  },
+function normalizeAssetName(value = "") {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
 
-  {
-    id: "baldi-remaster",
-    name: "Baldi's Basics Classic Remastered",
-    category: "Horror",
-    icon: "🏫",
-    featured: false
-  },
+function formatGameName(gameId) {
+  return gameId
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .map(part => {
+      if (!part) {
+        return "";
+      }
 
-  {
-    id: "bendy",
-    name: "Bendy and the Ink Machine",
-    category: "Horror",
-    icon: "🖋️",
-    featured: true
-  },
+      if (/^\d/.test(part)) {
+        return part;
+      }
 
-  {
-    id: "bergentruck",
-    name: "BERGENTRUCK 201x",
-    category: "Driving",
-    icon: "🚗",
-    featured: false
-  },
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join(" ");
+}
 
-  {
-    id: "bloodmoney",
-    name: "BLOODMONEY!",
-    category: "Indie",
-    icon: "💵",
-    featured: false
-  },
+function inferGameCategory(gameId) {
+  const id = gameId.toLowerCase();
 
-  {
-    id: "buckshot-roulette",
-    name: "Buckshot Roulette",
-    category: "Indie",
-    icon: "🎰",
-    featured: false
-  },
-
-  {
-    id: "class-of-09",
-    name: "Class of '09",
-    category: "Story",
-    icon: "📓",
-    featured: false
-  },
-
-  {
-    id: "cuphead",
-    name: "Cuphead",
-    category: "Platformer",
-    icon: "☕",
-    featured: true
-  },
-
-  {
-    id: "dead-plate",
-    name: "Dead Plate",
-    category: "Story",
-    icon: "🍽️",
-    featured: false
-  },
-
-  {
-    id: "deltatraveler",
-    name: "Deltatraveler",
-    category: "RPG",
-    icon: "⭐",
-    featured: true
-  },
-
-  {
-    id: "donottakethiscathome",
-    name: "Do NOT Take This Cat Home",
-    category: "Indie",
-    icon: "🐈",
-    featured: false
-  },
-
-  {
-    id: "getting-over-it",
-    name: "Getting Over It",
-    category: "Challenge",
-    icon: "🪨",
-    featured: true
-  },
-
-  {
-    id: "happy-sheepies",
-    name: "Happy Sheepies",
-    category: "Indie",
-    icon: "🐑",
-    featured: false
-  },
-
-  {
-    id: "hotline-miami",
-    name: "Hotline Miami",
-    category: "Action",
-    icon: "🌴",
-    featured: false
-  },
-
-  {
-    id: "jelly-drift",
-    name: "Jelly Drift",
-    category: "Racing",
-    icon: "🏎️",
-    featured: false
-  },
-
-  {
-    id: "karlson",
-    name: "Karlson",
-    category: "Action",
-    icon: "🥛",
-    featured: false
-  },
-
-  {
-    id: "kindergarten",
-    name: "Kindergarten",
-    category: "Story",
-    icon: "🎒",
-    featured: false
-  },
-
-  {
-    id: "minesweeperplus",
-    name: "Minesweeper Plus",
-    category: "Puzzle",
-    icon: "💣",
-    featured: false
-  },
-
-  {
-    id: "omori-fixed",
-    name: "OMORI",
-    category: "RPG",
-    icon: "🌻",
-    featured: true
-  },
-
-  {
-    id: "people-playground",
-    name: "People Playground",
-    category: "Sandbox",
-    icon: "🧪",
-    featured: false
-  },
-
-  {
-    id: "pizza-tower",
-    name: "Pizza Tower",
-    category: "Platformer",
-    icon: "🍕",
-    featured: true
-  },
-
-  {
-    id: "raft",
-    name: "RAFT",
-    category: "Survival",
-    icon: "🛶",
-    featured: false
-  },
-
-  {
-    id: "schoolboy-runaway",
-    name: "Schoolboy Runaway",
-    category: "Indie",
-    icon: "🎒",
-    featured: false
-  },
-
-  {
-    id: "slender",
-    name: "Slender: The Eight Pages",
-    category: "Horror",
-    icon: "🌲",
-    featured: false
-  },
-
-  {
-    id: "sonic.exe",
-    name: "Sonic.exe",
-    category: "Horror",
-    icon: "💨",
-    featured: false
-  },
-
-  {
-    id: "speed-stars",
-    name: "Speed Stars",
-    category: "Sports",
-    icon: "🏃",
-    featured: true
-  },
-
-  {
-    id: "tattletail",
-    name: "Tattletail",
-    category: "Horror",
-    icon: "🤖",
-    featured: false
-  },
-
-  {
-    id: "thats-not-my-neighbor",
-    name: "That's Not My Neighbor",
-    category: "Puzzle",
-    icon: "🚪",
-    featured: true
-  },
-
-  {
-    id: "the-man-in-the-window",
-    name: "The Man in the Window",
-    category: "Horror",
-    icon: "🪟",
-    featured: false
-  },
-
-  {
-    id: "ultrakill",
-    name: "ULTRAKILL",
-    category: "Action",
-    icon: "⚡",
-    featured: true
-  },
-
-  {
-    id: "undertale-yellow",
-    name: "Undertale Yellow",
-    category: "RPG",
-    icon: "💛",
-    featured: true
-  },
-
-  {
-    id: "web-fishing",
-    name: "Web Fishing",
-    category: "Casual",
-    icon: "🎣",
-    featured: true
-  },
-
-  {
-    id: "witch-heart",
-    name: "Witch's Heart",
-    category: "RPG",
-    icon: "🧙",
-    featured: false
-  },
-
-  {
-    id: "yandere-simulator",
-    name: "Yandere Simulator",
-    category: "Story",
-    icon: "🎀",
-    featured: false
-  },
-
-  {
-    id: "yume-nikki",
-    name: "Yume Nikki",
-    category: "RPG",
-    icon: "🛏️",
-    featured: false
+  if (/(horror|slender|fnaf|backrooms|evil|haunt|ghost|killer|spooky|monster|sans|bendy|tattletail|blood|night|scary)/.test(id)) {
+    return "Horror";
   }
 
-];
+  if (/(race|racer|car|drift|truck|speed|driver|motox|trial|bike|track|drive)/.test(id)) {
+    return "Racing";
+  }
+
+  if (/(platform|jump|run|dash|tower|tunnel|flappy|slope|stack|ball|mario|temple|vex|breakout|pong|space|portal|geodash)/.test(id)) {
+    return "Platformer";
+  }
+
+  if (/(puzzle|wordle|2048|connect|tic|mine|logic|quiz|hardest|breaklock|match)/.test(id)) {
+    return "Puzzle";
+  }
+
+  if (/(rpg|pokemon|adventur|story|simulator|yume|omori|kindergarten|school|dungeon|quest)/.test(id)) {
+    return "RPG";
+  }
+
+  if (/(shoot|gun|battle|strike|csgo|bullet|aim|combat|arena|blast|shot)/.test(id)) {
+    return "Action";
+  }
+
+  if (/(sport|basketball|football|soccer|tennis|golf|ski|athlet)/.test(id)) {
+    return "Sports";
+  }
+
+  if (/(idle|clicker|farm|cookie|zomb|builder|sim)/.test(id)) {
+    return "Idle";
+  }
+
+  return "Arcade";
+}
+
+function resolveGameIcon(gameId) {
+  const normalizedGame = normalizeAssetName(gameId);
+
+  const exactMatch = ICON_CATALOG.find(icon => {
+    const baseName = icon.replace(/\.webp$/i, "");
+    return normalizeAssetName(baseName) === normalizedGame;
+  });
+
+  if (exactMatch) {
+    return `/icons/${exactMatch}`;
+  }
+
+  const fallbackMatch = [...ICON_CATALOG]
+    .map(icon => {
+      const baseName = icon.replace(/\.webp$/i, "");
+      const normalizedIcon = normalizeAssetName(baseName);
+
+      let score = 0;
+
+      if (normalizedIcon.includes(normalizedGame) || normalizedGame.includes(normalizedIcon)) {
+        score += 25;
+      }
+
+      if (normalizedIcon.startsWith(normalizedGame.slice(0, 3)) || normalizedGame.startsWith(normalizedIcon.slice(0, 3))) {
+        score += 8;
+      }
+
+      if (normalizedIcon.replace(/s$/, "") === normalizedGame.replace(/s$/, "")) {
+        score += 12;
+      }
+
+      return { icon, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .find(item => item.score > 0);
+
+  if (fallbackMatch) {
+    return `/icons/${fallbackMatch.icon}`;
+  }
+
+  return "/icons/logo.png";
+}
+
+const GAMES = GAME_MANIFEST.map(gameId => ({
+  id: gameId,
+  name: formatGameName(gameId),
+  category: inferGameCategory(gameId),
+  icon: resolveGameIcon(gameId),
+  featured: FEATURED_GAMES.has(gameId)
+}));
 
 
 /* =========================================================
@@ -817,6 +989,10 @@ function renderGames() {
             );
 
 
+          const coverMarkup = game.icon.startsWith("/icons/")
+            ? `<img src="${escapeHTML(game.icon)}" alt="${escapeHTML(game.name)}" loading="lazy">`
+            : `<span class="game-cover-emoji">${escapeHTML(game.icon || "🎮")}</span>`;
+
           return `
 
             <article
@@ -830,7 +1006,7 @@ function renderGames() {
                   cover-${index % 4}
                 "
               >
-                ${game.icon}
+                ${coverMarkup}
               </div>
 
 
@@ -993,7 +1169,7 @@ function launchGame(id) {
   */
 
   const launchPath =
-    `games/${game.id}/`;
+    `play/${game.id}/`;
 
 
   showToast(
