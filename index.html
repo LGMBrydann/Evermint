@@ -311,7 +311,7 @@
           class="browser-view"
         >
 
-          <div class="browser-home">
+          <div class="browser-home" id="browser-home">
 
             <div class="browser-home-logo">
               🌿
@@ -322,14 +322,21 @@
             </h2>
 
             <p>
-              Your browser window is ready.
+              Enter a URL to get browsing.
             </p>
 
             <small>
-              Scramjet can be connected here.
+              Ready for Scramjet integration when you add a proxy backend.
             </small>
 
           </div>
+
+          <iframe
+            id="browser-frame"
+            title="Browser frame"
+            hidden
+            loading="lazy"
+          ></iframe>
 
         </div>
 

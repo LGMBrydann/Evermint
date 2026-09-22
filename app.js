@@ -1480,31 +1480,88 @@ $("#start-search-input")
    BROWSER
    ========================================================= */
 
+function normalizeBrowserUrl(value) {
+
+  const trimmed =
+    value.trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  if (
+    /^https?:\/\//i.test(trimmed) ||
+    /^about:/i.test(trimmed) ||
+    /^data:/i.test(trimmed) ||
+    /^blob:/i.test(trimmed) ||
+    /^file:\/\//i.test(trimmed)
+  ) {
+    return trimmed;
+  }
+
+  if (/^\d+\.\d+\.\d+\.\d+(?::\d+)?(?:\/.*)?$/i.test(trimmed)) {
+    return `http://${trimmed}`;
+  }
+
+  if (/^[^\s/]+\.[^\s/]+(?:\/.*)?$/i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+
+  return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
+
+}
+
+function showBrowserHome() {
+
+  const home = $("#browser-home");
+  const frame = $("#browser-frame");
+
+  if (home) {
+    home.hidden = false;
+  }
+
+  if (frame) {
+    frame.hidden = true;
+    frame.src = "about:blank";
+  }
+
+}
+
+function openBrowserURL(rawUrl) {
+
+  const normalized = normalizeBrowserUrl(rawUrl);
+
+  if (!normalized) {
+    showBrowserHome();
+    return;
+  }
+
+  const home = $("#browser-home");
+  const frame = $("#browser-frame");
+
+  if (!frame) {
+    return;
+  }
+
+  $("#browser-address").value = normalized;
+
+  if (home) {
+    home.hidden = true;
+  }
+
+  frame.hidden = false;
+  frame.src = normalized;
+
+}
+
 $("#browser-go")
   .addEventListener(
     "click",
     () => {
 
-      const address =
+      openBrowserURL(
         $("#browser-address")
           .value
-          .trim();
-
-
-      if (!address) {
-        return;
-      }
-
-
-      /*
-        Scramjet integration goes here.
-
-        The static OS deliberately does not pretend to
-        proxy a website itself.
-      */
-
-      showToast(
-        "Scramjet isn't connected yet."
       );
 
     }
@@ -1533,9 +1590,18 @@ $("#browser-back")
     "click",
     () => {
 
-      showToast(
-        "Browser navigation will be handled by Scramjet."
-      );
+      const frame = $("#browser-frame");
+
+      if (!frame || frame.hidden) {
+        showBrowserHome();
+        return;
+      }
+
+      try {
+        frame.contentWindow.history.back();
+      } catch (error) {
+        showToast("History access is restricted for that page.");
+      }
 
     }
   );
@@ -1546,9 +1612,18 @@ $("#browser-forward")
     "click",
     () => {
 
-      showToast(
-        "Browser navigation will be handled by Scramjet."
-      );
+      const frame = $("#browser-frame");
+
+      if (!frame || frame.hidden) {
+        showBrowserHome();
+        return;
+      }
+
+      try {
+        frame.contentWindow.history.forward();
+      } catch (error) {
+        showToast("History access is restricted for that page.");
+      }
 
     }
   );
@@ -1559,9 +1634,14 @@ $("#browser-reload")
     "click",
     () => {
 
-      showToast(
-        "Browser reload will be handled by Scramjet."
-      );
+      const frame = $("#browser-frame");
+
+      if (!frame || frame.hidden) {
+        showBrowserHome();
+        return;
+      }
+
+      frame.contentWindow.location.reload();
 
     }
   );
