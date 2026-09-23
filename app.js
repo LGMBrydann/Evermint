@@ -483,6 +483,8 @@ const GAMES = GAME_MANIFEST.map(gameId => ({
 }));
 
 
+const DEFAULT_SCRAMJET_WSS = "wss://xylora.org";
+
 /* =========================================================
    STATE
    ========================================================= */
@@ -1493,8 +1495,6 @@ $("#start-search-input")
    BROWSER
    ========================================================= */
 
-const DEFAULT_SCRAMJET_WSS = "wss://xylora.org";
-
 function updateBrowserStatus(message) {
 
   const status = $("#browser-status");
@@ -1575,10 +1575,26 @@ async function ensureScramjetRuntime() {
   }
 
   try {
-    await Promise.all([
-      loadScript("/vendor/scramjet/scramjet.all.js"),
-      loadScript("/vendor/scramjet/controller.api.js")
-    ]);
+    await loadScript("/vendor/scramjet/scramjet.all.js");
+
+    if (!window.$scramjet) {
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("Scramjet runtime did not initialize.")), 10000);
+        const check = () => {
+          if (window.$scramjet) {
+            clearTimeout(timeout);
+            resolve();
+            return;
+          }
+
+          requestAnimationFrame(check);
+        };
+
+        check();
+      });
+    }
+
+    await loadScript("/vendor/scramjet/controller.api.js");
   } catch (error) {
     console.error("Scramjet runtime failed to load", error);
     return false;
