@@ -1493,7 +1493,7 @@ $("#start-search-input")
    BROWSER
    ========================================================= */
 
-const DEFAULT_SCRAMJET_WSS = "wss://evermint.pages.dev";
+const DEFAULT_SCRAMJET_WSS = "wss://xylora.org";
 
 function updateBrowserStatus(message) {
 
@@ -1704,7 +1704,7 @@ function showBrowserHome() {
   }
 
   if (getScramjetEnabled()) {
-    updateBrowserStatus("Scramjet proxy ready at wss://evermint.pages.dev.");
+    updateBrowserStatus("Scramjet proxy ready at wss://xylora.org.");
   } else {
     updateBrowserStatus("Scramjet can be connected here.");
   }
